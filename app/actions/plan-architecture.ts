@@ -38,11 +38,9 @@ export async function planArchitecture(
     };
   }
 
-  const modelName = process.env.GEMINI_MODEL?.trim() || "gemini-1.5-pro-latest";
-
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: modelName });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const prompt = buildPrompt(trimmed);
 
     const generation = await model.generateContent({
@@ -60,6 +58,8 @@ export async function planArchitecture(
     });
 
     const text = generation.response.text()?.trim();
+
+    console.log("Gemini response:", text);
 
     if (!text) {
       throw new Error("Gemini returned an empty response");
@@ -79,7 +79,7 @@ export async function planArchitecture(
       status: "error",
       error:
         error instanceof Error
-          ? `${error.message}. (Model: ${modelName})`
+          ? error.message
           : "Unable to connect to Gemini right now. Please try again shortly.",
     };
   }
@@ -105,6 +105,14 @@ Return a concise plan in Markdown with the following shape:
 - introduce the diagram in prose before the code block
 - include at least one \`\`\`mermaid\`\`\` block that visualizes the solution
 - prefer component or sequence diagrams depending on fit
+
+CRITICAL Mermaid syntax rules:
+- Use simple node labels WITHOUT line breaks, <br> tags, or special HTML
+- Use parentheses () for rounded nodes, square brackets [] for rectangles
+- Keep all labels SHORT and SINGLE-LINE (e.g., "API Gateway" not "API Gateway<br>(Azure)")
+- Put detailed technology choices in comments or the narrative text, NOT in node labels
+- Use subgraphs for logical grouping (e.g., "subgraph Azure Cloud", "subgraph Microservices")
+- Valid example: C[API Gateway] or AGW(API Gateway) — NOT C[API Gateway<br>(Azure)]
 
 Keep the tone professional and actionable.`;
 }

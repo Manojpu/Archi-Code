@@ -25,7 +25,6 @@ npm install
 
 ```bash
 GEMINI_API_KEY=your-key-here
-GEMINI_MODEL=gemini-1.5-pro-latest # optional override
 ```
 
 3. Start the development server:
@@ -42,8 +41,7 @@ Open [http://localhost:3000](http://localhost:3000) to use the workbench. Provid
 
 ### Implementation Notes
 
-- `app/actions/plan-architecture.ts` is the single server action that validates input, calls Gemini, and parses Markdown + Mermaid output.
-- The Gemini model defaults to `gemini-1.5-pro-latest`; override it via `GEMINI_MODEL` if your key only has access to Flash or region-specific variants.
+- `app/actions/plan-architecture.ts` is the single server action that validates input, calls Gemini (`gemini-1.5-flash-001`), and parses Markdown + Mermaid output.
 - `components/workbench/workbench-client.tsx` hosts the requirement form, status messages, and Mermaid renderer (`components/mermaid-chart.tsx`).
 - UI primitives in `components/ui/*` follow Shadcn patterns and inherit the OKLCH theme from `globals.css`.
 
